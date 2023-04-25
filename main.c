@@ -40,12 +40,8 @@ typedef struct Jugador{
   List *inventario;
   struct Jugador *historial;
 } Jugador;
-//////nuevo struct para el uso de la lista historial
-/*typedef struct Nodo {
-    void *dato;
-    struct Nodo *siguiente;
-} Nodo;
-*/
+
+
 void mostrarMenu() {
   puts(BARRA);
   printf("                   SEBA´S ADVENTURE 64\n");
@@ -90,21 +86,6 @@ void mostrarPerfil(char *nombre, HashMap *map) {
   printf("\n");
   puts(BARRA);
   Pair *casilla = searchMap(map, nombre);
-  // para crear la copia
-  Jugador *aCopiar = ((Jugador *)casilla->value);
-  /*Jugador historial=*aCopiar;
-  aCopiar->historial=&historial;
-  printf("ahora la copia es la siguiente");
-  printf("Nombre: %s\nPuntos: %hu\nItems: %i\n",aCopiar->historial->nombre,aCopiar->historial->puntos,aCopiar->historial->items);
-*/
-  
-  /*Jugador *aCopiar = ((Jugador *)casilla->value);
-  Jugador *historial= ((Jugador *)casilla->value)->historial;
-  memcpy(&historial, &aCopiar, sizeof(Jugador*));
-  printf("ahora la copia es la siguiente");
-  printf("Nombre: %s\nPuntos: %hu\nItems: %i\n",historial->nombre,historial->puntos,historial->items);
-  */
-  //
   if (casilla == NULL) {
     printf("El jugador ingresado no existe\n");
     return;
@@ -126,6 +107,13 @@ void agregarItem(HashMap *map, char *nombre) {
     printf("El jugador ingresado no existe\n");
     return;
   } else {
+    // para crear la copia y ponerla en historial
+    Jugador *aCopiar = ((Jugador *)casilla->value); 
+    Jugador *historial = (Jugador*)malloc(sizeof(Jugador)); // reserva memoria para historial
+    memcpy(historial, aCopiar, sizeof(Jugador)); // copia el objeto Jugador
+    ((Jugador *)casilla->value)->historial = historial;
+  }
+    //
     printf("Ingrese el nombre del item\n");
     scanf(" %[^\n]s", aux);
     //aqui modifique el puntero i en vez de ponerlo dentro de las condiciones lo puse antes para ambos casos
@@ -141,13 +129,6 @@ void agregarItem(HashMap *map, char *nombre) {
       pushBack(((Jugador *)casilla->value)->inventario, i);
       ((Jugador *)casilla->value)->items++;
     }
-  }
-  //////////////////////////////almaceno los datos datos de la casilla en el historial (implementacion logica dsp)    
-    Jugador *aCopiar = (Jugador *)casilla->value;
-    Jugador *historial= ((Jugador *)casilla->value)->historial;
-    memcpy(&historial, &aCopiar, sizeof(Jugador*));
-    printf("%d",historial->items);
-    
 }
 void eliminarItem(HashMap *map, char * nombre) {
   
@@ -156,6 +137,12 @@ void eliminarItem(HashMap *map, char * nombre) {
     printf("El jugador ingresado no existe\n");
     return;
   } else {
+    // para crear la copia y ponerla en historial
+    Jugador *aCopiar = ((Jugador *)casilla->value); 
+    Jugador *historial = (Jugador*)malloc(sizeof(Jugador)); // reserva memoria para historial
+    memcpy(historial, aCopiar, sizeof(Jugador)); // copia el objeto Jugador
+    ((Jugador *)casilla->value)->historial = historial;
+    //
     char nombre2[31];
     printf("Ingrese el nombre del item a eliminar\n");
     scanf(" %[^\n]s", nombre2);
@@ -170,14 +157,18 @@ void eliminarItem(HashMap *map, char * nombre) {
 }
 
 void agregarPuntos(HashMap *map, char * nombre) {
-  printf("Ingrese el nombre del jugador\n");
-  scanf(" %[^\n]s", nombre);
   Pair *casilla = searchMap(map, nombre);
 
   if (casilla == NULL) {
     printf("El jugador ingresado no existe\n");
     return;
   } else {
+    // para crear la copia y ponerla en historial
+    Jugador *aCopiar = ((Jugador *)casilla->value); 
+    Jugador *historial = (Jugador*)malloc(sizeof(Jugador)); // reserva memoria para historial
+    memcpy(historial, aCopiar, sizeof(Jugador)); // copia el objeto Jugador
+    ((Jugador *)casilla->value)->historial = historial;
+    //
     unsigned short puntos;
     printf("Ingrese la cantidad de puntos\n");
     scanf("%hu", &puntos);
@@ -205,6 +196,25 @@ void mostrarJugadoresItemEsp(HashMap *map, List *nombres, char *nombre) {
   if (cont == 0)
     printf("No se encontraron jugadores con ese item\n");
 }
+
+void deshacer(HashMap *map, char * nombre){
+  Pair *casilla = searchMap(map, nombre);
+  if (casilla == NULL) {
+    printf("El jugador ingresado no existe\n");
+    return;
+  } else if(((Jugador *)casilla->value)->historial!=NULL){
+    // para crear la copia y ponerla en historial
+    Jugador *version_anterior =(Jugador*)malloc(sizeof(Jugador)); 
+    Jugador *historial = ((Jugador *)casilla->value)->historial; // reserva memoria para historial
+    memcpy(version_anterior, historial, sizeof(Jugador)); // copia el objeto Jugador
+    casilla->value = version_anterior;
+  }
+  else{
+    printf("no hay nada que deshacer\n");
+  }
+}
+
+
 /*
 void importar(List *l,FILE *archivo){
   char linea[1300];
@@ -330,7 +340,7 @@ int main() {
     if (numIngresado == 7) {
       printf("Ingrese el nombre del jugador\n");
       scanf(" %[\n]s", nombre);
-      //deshacer(nombre);
+      deshacer(map,nombre);
     }
     if (numIngresado == 8) {
       /*printf("Escriba el nombre del archivo\n");
