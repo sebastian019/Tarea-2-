@@ -1,4 +1,4 @@
-#include "hashmap.h"
+#include "hashmap.h"   // lollll
 #include "list.h"
 #include <assert.h>
 #include <stdbool.h>
