@@ -1,0 +1,9 @@
+1-Mediante el main el usuario ingresara el nombre del jugador, para despues llamar a la funcion "CrearPerfil", en el cual se inicializaran sus estadisticas y creara un mapa el cual guardara los items del jugador.
+
+2-Se pondra una funcion que reciba como parametro un nombre del jugador para compararlo con la lista para encontrar la clave de el jugador buscado y acceder a sus datos.
+
+3-En la funcion main se ingresaran el nombre de un jugador y un item que se le quiera asignar, luego estos entran como parametros a una funcion que convierte en un indice el nombre a traves de hash() y ubica su posicion en el mapa, despues en el mapa de items del jugador se agrega un nuevo elemento.
+
+4-Usando un mapa accederemos a los items del jugador, despues tendremos otro mapa el cual guarda los items del jugador y con un contador tenemos la cantidad de item.
+
+6-Con una pila almacenamos la ultima accion del jugador, asi cuando el jugador quiera eliminar su ultima accion simplemente accederemos al ultimo elemento ingresado, para asi eliminarlo de la pila
