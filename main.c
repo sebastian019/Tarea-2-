@@ -91,9 +91,18 @@ void mostrarPerfil(char *nombre, HashMap *map) {
   puts(BARRA);
   Pair *casilla = searchMap(map, nombre);
   // para crear la copia
-  /*Jugador *aCopiar = (Jugador *)casilla->value;
+  Jugador *aCopiar = ((Jugador *)casilla->value);
+  /*Jugador historial=*aCopiar;
+  aCopiar->historial=&historial;
+  printf("ahora la copia es la siguiente");
+  printf("Nombre: %s\nPuntos: %hu\nItems: %i\n",aCopiar->historial->nombre,aCopiar->historial->puntos,aCopiar->historial->items);
+*/
+  
+  /*Jugador *aCopiar = ((Jugador *)casilla->value);
   Jugador *historial= ((Jugador *)casilla->value)->historial;
-  memcpy(&historial, &aCopiar, sizeof(Jugador));
+  memcpy(&historial, &aCopiar, sizeof(Jugador*));
+  printf("ahora la copia es la siguiente");
+  printf("Nombre: %s\nPuntos: %hu\nItems: %i\n",historial->nombre,historial->puntos,historial->items);
   */
   //
   if (casilla == NULL) {
@@ -108,12 +117,6 @@ void mostrarPerfil(char *nombre, HashMap *map) {
       mostrarItems(casilla);
     }
   }
-  /*printf("ahora la copia es la siguiente");
-  printf("Nombre: %s\nPuntos: %hu\nItems: %i\n",
-  historial->nombre,
-   historial->puntos,
-   historial->items);
-   */
 }
 
 void agregarItem(HashMap *map, char *nombre) {
@@ -142,7 +145,7 @@ void agregarItem(HashMap *map, char *nombre) {
   //////////////////////////////almaceno los datos datos de la casilla en el historial (implementacion logica dsp)    
     Jugador *aCopiar = (Jugador *)casilla->value;
     Jugador *historial= ((Jugador *)casilla->value)->historial;
-    memcpy(&historial, &aCopiar, sizeof(Jugador));
+    memcpy(&historial, &aCopiar, sizeof(Jugador*));
     printf("%d",historial->items);
     
 }
