@@ -1,0 +1,13 @@
+// para crear la copia y ponerla en historial
+    Jugador *aCopiar = ((Jugador *)casilla->value); 
+    Jugador *historial = (Jugador*)malloc(sizeof(Jugador)); // reserva memoria para historial
+    memcpy(historial, aCopiar, sizeof(Jugador)); // copia el objeto Jugador
+    ((Jugador *)casilla->value)->historial = historial;
+    historial->inventario=createList();
+    inventario *item=(inventario*)firstList(aCopiar->inventario);
+    while(item!=NULL){
+      inventario *aux2=(inventario*) malloc(sizeof(inventario));
+      memcpy(aux2,item,sizeof(inventario));
+      pushFront(historial->inventario,aux2);
+      item=nextList(aCopiar->inventario); 
+    }
