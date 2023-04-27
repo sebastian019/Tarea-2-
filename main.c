@@ -1,4 +1,4 @@
-#include "hashmap.h"   // lollll
+#include "hashmap.h"
 #include "list.h"
 #include <assert.h>
 #include <stdbool.h>
@@ -7,27 +7,11 @@
 #include <string.h>
 #define BARRA "-------------------------------------------------------"
 
-struct HashTable {
-  int size;
-  struct Bucket **buckets;
-};
 
-struct Bucket {
-  char *key;
-  void *value;
-  struct Bucket *next;
-};
-
-struct HashMap {
-  Pair **buckets;
-  long size;     // cantidad de datos/pairs en la tabla
-  long capacity; // capacidad de la tabla
-  long current;  // indice del ultimo dato accedido
-};
 
 typedef struct {
   char item[31];
-} inventario;
+} inventario;           // cambien el nombre del struct pls me duele la cabeza
 
 typedef struct {
   char nombre[31];
@@ -100,7 +84,7 @@ void mostrarPerfil(char *nombre, HashMap *map) {
   }
 }
 
-void agregarItem(HashMap *map, char *nombre) {
+void agregarItem(HashMap *map, char *nombre, char *item) {
   char aux[31];
   Pair *casilla = searchMap(map, nombre);
   if (casilla == NULL) {
@@ -112,10 +96,17 @@ void agregarItem(HashMap *map, char *nombre) {
     Jugador *historial = (Jugador*)malloc(sizeof(Jugador)); // reserva memoria para historial
     memcpy(historial, aCopiar, sizeof(Jugador)); // copia el objeto Jugador
     ((Jugador *)casilla->value)->historial = historial;
-  }
-    //
-    printf("Ingrese el nombre del item\n");
-    scanf(" %[^\n]s", aux);
+    historial->inventario=createList();
+    inventario *item=(inventario*)firstList(aCopiar->inventario);
+    
+    while(item!=NULL);{ 
+      inventario *aux2=(inventario*) malloc(sizeof(inventario));
+      memcpy(aux2,item,sizeof(inventario));
+      pushFront(historial->inventario,aux2);
+      item=nextList(aCopiar->inventario);
+    }
+    //////////////////////////////
+    
     //aqui modifique el puntero i en vez de ponerlo dentro de las condiciones lo puse antes para ambos casos
     inventario *i = (inventario *)malloc(sizeof(inventario));
     if (firstList(((Jugador *)casilla->value)->inventario) == NULL) {
@@ -142,7 +133,14 @@ void eliminarItem(HashMap *map, char * nombre) {
     Jugador *historial = (Jugador*)malloc(sizeof(Jugador)); // reserva memoria para historial
     memcpy(historial, aCopiar, sizeof(Jugador)); // copia el objeto Jugador
     ((Jugador *)casilla->value)->historial = historial;
-    //
+    historial->inventario=createList();
+    inventario *item=(inventario*)firstList(aCopiar->inventario);
+    while(item!=NULL){
+      inventario *aux2=(inventario*) malloc(sizeof(inventario));
+      memcpy(aux2,item,sizeof(inventario));
+      pushFront(historial->inventario,aux2);
+      item=nextList(aCopiar->inventario);
+    }
     char nombre2[31];
     printf("Ingrese el nombre del item a eliminar\n");
     scanf(" %[^\n]s", nombre2);
@@ -215,46 +213,37 @@ void deshacer(HashMap *map, char * nombre){
 }
 
 
-/*
-void importar(List *l,FILE *archivo){
+
+void importar(HashMap *map,FILE *archivo){
   char linea[1300];
   char *aux;
   int i, edadInt;
 fgets(linea, 1024, archivo); //Se lee la primera linea por separado ya que no se pretende guardar su valor.
   while(fgets(linea, 1024, archivo) != NULL){ //Se leen todas las lineas en orden
-    paciente* p = (paciente*) malloc(sizeof(paciente));
-    p->medicos = createList();
-    for(i = 0 ; i < 7 ; i++){//Se realizan 7 ciclos para permitir que se realizen las suficientes operaciones(6 valores en el struct)
+    Jugador* p = (Jugador*) malloc(sizeof(Jugador));
+    p->inventario = createList();
+    for(i = 0 ; i < 4 ; i++){//Se realizan 7 ciclos para permitir que se realizen las suficientes operaciones(6 valores en el struct)
         aux = get_csv_field(linea, i); //aux se convierte en la linea de caracteres i-esima para rellenar el valor correspondiente.
         if(i == 0){
         strcpy(p->nombre, aux);
         }
         if(i == 1){
-        strcpy(p->apellido, aux);
+        p->puntos = atol(aux);
         }
-        if(i == 2){ 
-        edadInt= atoi(aux);
-        p->edad=edadInt;
+        if(i == 2){
+          p->items = atoi(aux);
         }
         if(i == 3){
-        strcpy(p->telefono, aux);
-        }
-        if(i== 4){
-        strcpy(p->direccion, aux);
-        }
-        if(i == 5){
-        strcpy(p->numeroSocial, aux);
-        Registrar(p, l);
-        }  
-        if(i == 6){
-        asignarMedico(l, p->nombre, p->apellido, aux );
+          agregarItem(map, p->nombre, aux);
+          i++;
+          aux = get_csv_field(linea, i);
+          
         }
       }
     }
   fclose(archivo);
 }
 
-*/
 /*
 void exportar(List* l,FILE *archivo){
   
@@ -280,6 +269,7 @@ void exportar(List* l,FILE *archivo){
 int main() {
   HashMap *map = createMap(10000); ///////////////////////////////////////////
   char nombre[31];
+  char item[31]
   List *nombres = createList(); // ruben: pq esto?
   unsigned short numIngresado;
   int largoName;
@@ -320,6 +310,8 @@ int main() {
     if (numIngresado == 3) {
       printf("Ingrese el nombre del jugador\n");
       scanf(" %[^\n]s", nombre);
+      printf("Ingrese el nombre del item\n");
+      scanf(" %[^\n]s", aux);
       agregarItem(map,nombre);
     }
     if (numIngresado == 4) {
@@ -339,7 +331,7 @@ int main() {
     }
     if (numIngresado == 7) {
       printf("Ingrese el nombre del jugador\n");
-      scanf(" %[\n]s", nombre);
+      scanf(" %[^\n]s", nombre);
       deshacer(map,nombre);
     }
     if (numIngresado == 8) {
@@ -360,8 +352,8 @@ int main() {
         scanf(" %[^\n]", nombreArchivo2);
         FILE* archivo = fopen(nombreArchivo2, "a");
         exportar());*/
-    } else {
+    } //else {
       // printf("* No hay lista exportable\n");
-    }
+    //}
   }
 }
